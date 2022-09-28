@@ -54,31 +54,48 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let url = 'http://localhost:9080/albums/add-new';
-          console.log('尝试添加相册……');
           console.log('请求路径为：' + url);
           console.log('请求参数为：' + this.ruleForm);
           console.log(this.ruleForm);
-          let formData = this.qs.stringify(this.ruleForm);
-          console.log('将ruleForm对象转换为FormData：');
-          console.log(formData);
-          this.axios
-              .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
-              .post(url, formData).then((response) => {
-            console.log('服务器端响应的结果：' + response);
-            console.log(response);
+          this.axios.post(url,this.ruleForm).then((response)=>{
             let responseBody = response.data;
             if (responseBody.state == 20000) {
-              console.log('添加相册成功');
-              this.$message({
-                message: '添加相册成功！',
-                type: 'success'
-              });
-              this.resetForm(formName);
-            } else {
-              console.log(responseBody.message);
-              this.$message.error(responseBody.message);
-            }
+                  console.log('添加相册成功');
+                  this.$message({
+                    message: '添加相册成功！',
+                    type: 'success'
+                  });
+                  this.resetForm(formName);
+                } else {
+                  console.log(responseBody.message);
+                  this.$message.error(responseBody.message);
+                }
           });
+          // console.log('尝试添加相册……');
+          // console.log('请求路径为：' + url);
+          // console.log('请求参数为：' + this.ruleForm);
+          // console.log(this.ruleForm);
+          // let formData = this.qs.stringify(this.ruleForm);
+          // console.log('将ruleForm对象转换为FormData：');
+          // console.log(formData);
+          // this.axios
+          //     .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
+          //     .post(url, formData).then((response) => {
+          //   console.log('服务器端响应的结果：' + response);
+          //   console.log(response);
+          //   let responseBody = response.data;
+          //   if (responseBody.state == 20000) {
+          //     console.log('添加相册成功');
+          //     this.$message({
+          //       message: '添加相册成功！',
+          //       type: 'success'
+          //     });
+          //     this.resetForm(formName);
+          //   } else {
+          //     console.log(responseBody.message);
+          //     this.$message.error(responseBody.message);
+          //   }
+          // });
         } else {
           console.log('error submit!!');
           return false;

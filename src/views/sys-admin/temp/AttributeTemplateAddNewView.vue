@@ -59,27 +59,45 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let url = 'http://localhost:9080/attribute-templates/add-new';
-          console.log('请求路径：' + url);
-          let formData = this.qs.stringify(this.ruleForm);
-          console.log('请求参数：');
-          console.log(formData);
-          this.axios
-              .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
-              .post(url, formData).then((response) => {
-            console.log('服务器端响应的结果：');
-            console.log(response);
+          let url = 'http://localhost:9080/attribute-template/add-new';
+          console.log('请求路径为：' + url);
+          console.log('请求参数为：' + this.ruleForm);
+          console.log(this.ruleForm);
+          this.axios.post(url,this.ruleForm).then((response)=>{
             let responseBody = response.data;
             if (responseBody.state == 20000) {
+              console.log('添加属性模板成功');
               this.$message({
-                message: '添加成功！',
+                message: '添加属性模板成功！',
                 type: 'success'
               });
               this.resetForm(formName);
             } else {
+              console.log(responseBody.message);
               this.$message.error(responseBody.message);
             }
           });
+          // let url = 'http://localhost:9080/attribute-templates/add-new';
+          // console.log('请求路径：' + url);
+          // let formData = this.qs.stringify(this.ruleForm);
+          // console.log('请求参数：');
+          // console.log(formData);
+          // this.axios
+          //     .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
+          //     .post(url, formData).then((response) => {
+          //   console.log('服务器端响应的结果：');
+          //   console.log(response);
+          //   let responseBody = response.data;
+          //   if (responseBody.state == 20000) {
+          //     this.$message({
+          //       message: '添加成功！',
+          //       type: 'success'
+          //     });
+          //     this.resetForm(formName);
+          //   } else {
+          //     this.$message.error(responseBody.message);
+          //   }
+          // });
         } else {
           alert('error submit!!');
           return false;

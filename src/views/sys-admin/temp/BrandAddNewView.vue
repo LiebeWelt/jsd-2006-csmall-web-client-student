@@ -79,7 +79,36 @@ export default {
     };
   },
   methods: {
-
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let url = 'http://localhost:9080/brands/add-new';
+          console.log('请求路径为：' + url);
+          console.log('请求参数为：' + this.ruleForm);
+          console.log(this.ruleForm);
+          this.axios.post(url,this.ruleForm).then((response)=>{
+            let responseBody = response.data;
+            if (responseBody.state == 20000) {
+              console.log('添加品牌成功');
+              this.$message({
+                message: '添加品牌成功！',
+                type: 'success'
+              });
+              this.resetForm(formName);
+            } else {
+              console.log(responseBody.message);
+              this.$message.error(responseBody.message);
+            }
+          });
+        } else {
+          alert('error submit!!');
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    }
   }
 }
 </script>
