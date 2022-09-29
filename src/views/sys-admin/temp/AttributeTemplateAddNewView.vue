@@ -63,7 +63,10 @@ export default {
           console.log('请求路径为：' + url);
           console.log('请求参数为：' + this.ruleForm);
           console.log(this.ruleForm);
-          this.axios.post(url,this.ruleForm).then((response)=>{
+          let formData = this.qs.stringify(this.ruleForm);
+          console.log('将ruleForm对象转换为FormData：');
+          console.log(formData);
+          this.axios.post(url,formData).then((response)=>{
             let responseBody = response.data;
             if (responseBody.state == 20000) {
               console.log('添加属性模板成功');
