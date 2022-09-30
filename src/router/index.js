@@ -33,7 +33,10 @@ const routes = [
         path: '/sys-admin/temp/admin/add-new',
         component: () => import('../views/sys-admin/temp/AdminAddNewView.vue')
       },
-
+      {
+        path: '/sys-admin/temp/album/list', // http://localhost:9000/sys-admin/temp/album/list
+        component: () => import('../views/sys-admin/temp/AlbumListView.vue')
+      },
     ]
   },
   {
