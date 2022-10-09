@@ -17,9 +17,9 @@
       <el-table-column label="操作" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-edit" size="mini" circle
-                      @click="handleEdit(scope.row.id)"></el-button>
+                      @click="handleEdit(scope.row)"></el-button>
           <el-button type="danger" icon="el-icon-delete" size="mini" circle
-                      @click="handleDelete(scope.row.id)"></el-button>
+                      @click="openDeleteConfirm(scope.row)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -34,11 +34,34 @@ export default {
     }
   },
   methods: {
-    handleEdit(id) {
+    openDeleteConfirm(album) {
+      let title = '提示';
+      let message = '此操作将永久删除【' + album.name + '】相册，是否继续？';
+      this.$confirm(message, title, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.handleDelete(album);
+      }).catch(() => {
+      });
+    },
+    handleEdit(album) {
       alert('你点击了id=' + id + '的相册数据的【编辑】按钮！');
     },
-    handleDelete(id) {
-      alert('你点击了id=' + id + '的相册数据的【删除】按钮！');
+    handleDelete(album) {
+      // alert('你点击了【' + album.name + ' (id=' + album.id + ')】的【删除】按钮');
+      console.log('handleDelete ... id=' + album.id);
+      let url = 'http://localhost:9080/albums/' + album.id + '/delete';
+      console.log('url = ' + url);
+      this.axios.post(url).then((response) => {
+        let responseBody = response.data;
+        console.log(responseBody);
+        if (responseBody.state != 20000) {
+          this.$message.error(responseBody.message);
+        }
+        this.loadAlbumList();
+      });
     },
     loadAlbumList() {
       console.log('准备从服务器获取相册列表……');
