@@ -19,8 +19,8 @@
       <el-form-item label="昵称" prop="nickname">
         <el-input v-model="ruleForm.nickname"></el-input>
       </el-form-item>
-      <el-form-item label="头像" prop="avatar">
-        <el-input v-model="ruleForm.avatar"></el-input>
+      <el-form-item label="简介" prop="description">
+        <el-input v-model="ruleForm.description"></el-input>
       </el-form-item>
       <el-form-item label="手机号码" prop="phone">
         <el-input v-model="ruleForm.phone"></el-input>
@@ -28,8 +28,8 @@
       <el-form-item label="电子邮箱" prop="email">
         <el-input v-model="ruleForm.email"></el-input>
       </el-form-item>
-      <el-form-item label="简介" prop="description">
-        <el-input v-model="ruleForm.description"></el-input>
+      <el-form-item label="头像" prop="avatar">
+        <el-input v-model="ruleForm.avatar"></el-input>
       </el-form-item>
       <el-form-item label="是否启用" prop="enable">
         <el-switch
@@ -37,13 +37,13 @@
             :active-value="1"
             :inactive-value="0"
             active-color="#13ce66"
-            inactive-color="#999">
+            inactive-color="#ccc">
         </el-switch>
       </el-form-item>
       <el-form-item label="角色" prop="roleIds">
         <el-select v-model="ruleForm.roleIds" multiple placeholder="请选择">
           <el-option
-              v-for="item in roleListOptions"
+              v-for="item in roleList"
               :key="item.id"
               :label="item.name"
               :value="item.id">
@@ -62,26 +62,34 @@
 export default {
   data() {
     return {
-      roleListOptions: [],
+      roleList: [],
       ruleForm: {
         username: '',
         password: '',
         nickname: '',
-        avatar: '',
+        description: '',
         phone: '',
         email: '',
-        description: '',
-        enable: 1,
-        roleIds: []
+        avatar: '',
+        enable: '',
+        roleIds: ''
       },
       rules: {
         username: [
           {required: true, message: '请输入用户名', trigger: 'blur'},
-          {min: 4, max: 15, message: '长度在 4 到 15 个字符', trigger: 'blur'}
+          {min: 4, max: 15, message: '长度在 4 到 25 个字符', trigger: 'blur'}
         ],
         password: [
           {required: true, message: '请输入密码', trigger: 'blur'},
           {min: 4, max: 15, message: '长度在 4 到 15 个字符', trigger: 'blur'}
+        ],
+        nickname: [
+          {required: true, message: '请输入昵称', trigger: 'blur'},
+          {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
+        ],
+        description: [
+          {required: true, message: '请输入简介', trigger: 'blur'},
+          {min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur'}
         ],
         phone: [
           {required: true, message: '请输入手机号码', trigger: 'blur'},
@@ -91,9 +99,8 @@ export default {
           {required: true, message: '请输入电子邮箱', trigger: 'blur'},
           {min: 4, max: 30, message: '长度在 4 到 30 个字符', trigger: 'blur'}
         ],
-        description: [
-          {required: true, message: '请输入简介', trigger: 'blur'},
-          {min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur'}
+        enable: [
+          {required: true, message: '', trigger: 'change'}
         ],
         roleIds: [
           {type: 'array', required: true, message: '请选择角色', trigger: 'change'}
@@ -104,68 +111,33 @@ export default {
   methods: {
     loadRoleList() {
       let url = 'http://localhost:9081/roles';
-      this.axios
-          .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
-          .get(url).then((response) => {
+      console.log('url = ' + url);
+      this.axios.get(url).then((response) => {
         let responseBody = response.data;
-        if (responseBody.state == 20000) {
-          let roleList = responseBody.data;
-          for (let i = 0; i < roleList.length; i++) {
-            console.log('id=' + roleList[i].id + ', name=' + roleList[i].name);
-          }
-          this.roleListOptions = roleList;
-        } else {
-          this.$message.error(responseBody.message);
-        }
+        this.roleList = responseBody.data;
       });
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let url = 'http://localhost:9081/admins/add-new';
-          console.log('请求路径为：' + url);
-          console.log('请求参数为：' + this.ruleForm);
-          console.log(this.ruleForm);
-          this.axios.post(url,this.ruleForm).then((response)=>{
+          console.log('url = ' + url);
+          let formData = this.qs.stringify(this.ruleForm);
+          console.log('formData：' + formData);
+          this.axios.post(url, formData).then((response)=> {
             let responseBody = response.data;
             if (responseBody.state == 20000) {
-              console.log('添加相册成功');
               this.$message({
-                message: '添加相册成功！',
+                message: '添加管理员成功！',
                 type: 'success'
               });
               this.resetForm(formName);
             } else {
-              console.log(responseBody.message);
               this.$message.error(responseBody.message);
             }
           });
-          // let url = 'http://localhost:9081/admins/add-new';
-          // console.log('请求路径：' + url);
-          //
-          // let formData = this.qs.stringify(this.ruleForm, {'arrayFormat': 'repeat'});
-          // console.log('请求参数：');
-          // console.log(formData);
-          //
-          // this.axios
-          //     .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
-          //     .post(url, formData).then((response) => {
-          //   console.log('服务器端响应的结果：');
-          //   console.log(response);
-          //
-          //   let responseBody = response.data;
-          //   if (responseBody.state == 20000) {
-          //     this.$message({
-          //       message: '添加成功！',
-          //       type: 'success'
-          //     });
-          //     this.resetForm(formName);
-          //   } else {
-          //     this.$message.error(responseBody.message);
-          //   }
-          // });
         } else {
-          alert('error submit!!');
+          console.log('error submit!!');
           return false;
         }
       });

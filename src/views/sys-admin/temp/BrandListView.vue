@@ -4,18 +4,18 @@
       <el-breadcrumb-item :to="{ path: '/sys-admin' }">
         <i class="el-icon-s-promotion"></i> 后台管理
       </el-breadcrumb-item>
-      <el-breadcrumb-item>管理员列表</el-breadcrumb-item>
+      <el-breadcrumb-item>品牌列表</el-breadcrumb-item>
     </el-breadcrumb>
 
     <el-divider></el-divider>
 
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="id" label="ID" align="center" width="40"></el-table-column>
-      <el-table-column prop="username" label="用户名" align="center" width="120"></el-table-column>
-      <el-table-column prop="nickname" label="昵称" align="center" width="100"></el-table-column>
-      <el-table-column prop="phone" label="手机号码" align="center" width="110"></el-table-column>
-      <el-table-column prop="email" label="电子邮箱" header-align="center" width="180"></el-table-column>
-      <el-table-column prop="description" label="简介" header-align="center"></el-table-column>
+      <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
+      <el-table-column prop="logo" label="LOGO" width="120" align="center"></el-table-column>
+      <el-table-column prop="name" label="名称" width="120" align="center"></el-table-column>
+      <el-table-column prop="pinyin" label="拼音" width="180" align="center"></el-table-column>
+      <el-table-column prop="description" label="简介" align="center"></el-table-column>
+      <el-table-column prop="sort" label="排序序号" width="80" align="center"></el-table-column>
       <el-table-column label="是否启用" align="center" width="80">
         <template slot-scope="scope">
           <el-switch
@@ -28,7 +28,7 @@
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="100">
+      <el-table-column label="操作" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-edit" size="mini" circle
                      @click="handleEdit(scope.row)"></el-button>
@@ -48,10 +48,10 @@ export default {
     }
   },
   methods: {
-    changeEnable(admin) {
+    changeEnable(brand) {
       let enableText = ['禁用', '启用'];
-      let url = 'http://localhost:9081/admins/' + admin.id;
-      if (admin.enable == 1) {
+      let url = 'http://localhost:9080/brands/' + brand.id;
+      if (brand.enable == 1) {
         url += '/enable';
       } else {
         url += '/disable';
@@ -62,7 +62,7 @@ export default {
         console.log(responseBody);
         if (responseBody.state == 20000) {
           this.$message({
-            message: '将【' + admin.username + '】的启用状态设置为【' + enableText[admin.enable] + '】成功',
+            message: '将【' + brand.name + '】的启用状态设置为【' + enableText[brand.enable] + '】成功',
             type: 'success'
           });
         } else {
@@ -76,24 +76,38 @@ export default {
         }
       });
     },
-    handleEdit(admin) {
-
-    },
-    openDeleteConfirm(admin) {
+    openDeleteConfirm(brand) {
       let title = '提示';
-      let message = '此操作将永久删除【' + admin.username + '】管理员，是否继续？';
+      let message = '此操作将永久删除【' + brand.name + '】品牌，是否继续？';
       this.$confirm(message, title, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.handleDelete(admin);
+        this.handleDelete(brand);
       }).catch(() => {
       });
     },
-    handleDelete(admin) {
-      console.log('handleDelete ... id=' + admin.id);
-      let url = 'http://localhost:9081/admins/' + admin.id + '/delete';
+    loadBrandList() {
+      let url = 'http://localhost:9080/brands';
+      this.axios
+          // .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
+          .get(url).then((response) => {
+        let responseBody = response.data;
+        if (responseBody.state == 20000) {
+          this.tableData = responseBody.data;
+        } else {
+          this.$message.error(responseBody.message);
+        }
+      });
+    },
+    handleEdit(id) {
+      alert('你点击了id=' + id + '的品牌数据的【编辑】按钮！');
+    },
+    handleDelete(brand) {
+      // alert('你点击了id=' + id + '的品牌数据的【删除】按钮！');
+      console.log('handleDelete ... id=' + brand.id);
+      let url = 'http://localhost:9080/brands/' + brand.id + '/delete';
       console.log('url = ' + url);
       this.axios.post(url).then((response) => {
         let responseBody = response.data;
@@ -101,22 +115,13 @@ export default {
         if (responseBody.state != 20000) {
           this.$message.error(responseBody.message);
         }
-        this.loadAdminList();
+        this.loadBrandList();
       });
-    },
-    loadAdminList() {
-      console.log('loadAdminList ...');
-      let url = 'http://localhost:9081/admins';
-      console.log('url = ' + url);
-      this.axios.get(url).then((response) => {
-        let responseBody = response.data;
-        console.log(responseBody);
-        this.tableData = responseBody.data;
-      });
+
     }
   },
   mounted() {
-    this.loadAdminList();
+    this.loadBrandList();
   }
 }
 </script>

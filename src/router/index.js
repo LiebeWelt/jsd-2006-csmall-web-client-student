@@ -22,8 +22,16 @@ const routes = [
         component: () => import('../views/sys-admin/temp/BrandAddNewView.vue')
       },
       {
+        path: '/sys-admin/temp/brand/list', // http://localhost:9000/sys-admin/temp/brand/list
+        component: () => import('../views/sys-admin/temp/BrandListView.vue')
+      },
+      {
         path: '/sys-admin/temp/attribute/add-new',
         component: () => import('../views/sys-admin/temp/AttributeAddNewView.vue')
+      },
+      {
+        path: '/sys-admin/temp/attribute/list', // http://localhost:9000/sys-admin/temp/attribute/list
+        component: () => import('../views/sys-admin/temp/AttributeListView.vue')
       },
       {
         path: '/sys-admin/temp/category/add-new',
@@ -32,6 +40,10 @@ const routes = [
       {
         path: '/sys-admin/temp/attribute-template/add-new',
         component: () => import('../views/sys-admin/temp/AttributeTemplateAddNewView.vue')
+      },
+      {
+        path: '/sys-admin/temp/attribute-template/list', // http://localhost:9000/sys-admin/temp/attribute-template/list
+        component: () => import('../views/sys-admin/temp/AttributeTemplateListView.vue')
       },
       {
         path: '/sys-admin/temp/admin/add-new',

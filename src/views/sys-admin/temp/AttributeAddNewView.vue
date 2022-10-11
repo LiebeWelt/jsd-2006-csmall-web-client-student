@@ -99,9 +99,9 @@ export default {
   },
   methods: {
     loadAttributeTemplateList() {
-      let url = 'http://localhost:9080/attribute-templates';
+      let url = 'http://localhost:9080/attribute-template';
       this.axios
-          .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
+          // .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
           .get(url).then((response) => {
         let responseBody = response.data;
         if (responseBody.state == 20000) {
@@ -117,11 +117,11 @@ export default {
         if (valid) {
           let url = 'http://localhost:9080/attributes/add-new';
           console.log('请求路径：' + url);
-          let formData = this.qs.stringify(this.ruleForm, {'arrayFormat': 'repeat'});
+          let formData = this.qs.stringify(this.ruleForm/*, {'arrayFormat': 'repeat'}*/);
           console.log('请求参数：');
           console.log(formData);
           this.axios
-              .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
+              // .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
               .post(url, formData).then((response) => {
             console.log('服务器端响应的结果：');
             console.log(response);
