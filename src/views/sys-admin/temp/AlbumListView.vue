@@ -54,7 +54,9 @@ export default {
       console.log('handleDelete ... id=' + album.id);
       let url = 'http://localhost:9080/albums/' + album.id + '/delete';
       console.log('url = ' + url);
-      this.axios.post(url).then((response) => {
+      this.axios
+          .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
+          .post(url).then((response) => {
         let responseBody = response.data;
         console.log(responseBody);
         if (responseBody.state != 20000) {

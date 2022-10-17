@@ -38,6 +38,10 @@ const routes = [
         component: () => import('../views/sys-admin/temp/CategoryAddNewView.vue')
       },
       {
+        path: '/sys-admin/temp/category/list', // http://localhost:9000/sys-admin/temp/category/list
+        component: () => import('../views/sys-admin/temp/CategoryListView.vue')
+      },
+      {
         path: '/sys-admin/temp/attribute-template/add-new',
         component: () => import('../views/sys-admin/temp/AttributeTemplateAddNewView.vue')
       },

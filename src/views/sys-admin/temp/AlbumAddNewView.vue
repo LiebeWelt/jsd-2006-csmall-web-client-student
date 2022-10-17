@@ -64,7 +64,9 @@ export default {
           let formData = this.qs.stringify(this.ruleForm);
           console.log('将ruleForm对象转换为FormData：');
           console.log(formData);
-          this.axios.post(url,formData).then((response)=>{
+          this.axios
+              .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
+              .post(url,formData).then((response)=>{
             let responseBody = response.data;
             if (responseBody.state == 20000) {
                   console.log('添加相册成功');

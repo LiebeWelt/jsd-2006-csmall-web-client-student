@@ -57,7 +57,9 @@ export default {
         url += '/disable';
       }
       console.log('url = ' + url);
-      this.axios.post(url).then((response) => {
+      this.axios
+          .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
+          .post(url).then((response) => {
         let responseBody = response.data;
         console.log(responseBody);
         if (responseBody.state == 20000) {
@@ -70,9 +72,10 @@ export default {
           let title = '操作失败';
           this.$alert(responseBody.message, title, {
             confirmButtonText: '确定',
-            callback: action => {}
+            callback: action => {
+              this.loadAdminList();
+            }
           });
-          this.loadAdminList();
         }
       });
     },
@@ -95,7 +98,9 @@ export default {
       console.log('handleDelete ... id=' + admin.id);
       let url = 'http://localhost:9081/admins/' + admin.id + '/delete';
       console.log('url = ' + url);
-      this.axios.post(url).then((response) => {
+      this.axios
+          .create({'headers': {'Authorization': localStorage.getItem('jwt')}})
+          .post(url).then((response) => {
         let responseBody = response.data;
         console.log(responseBody);
         if (responseBody.state != 20000) {
@@ -106,9 +111,13 @@ export default {
     },
     loadAdminList() {
       console.log('loadAdminList ...');
+      let jwt = localStorage.getItem('jwt');
+      console.log('从LocalStorage中取出JWT：' + jwt);
       let url = 'http://localhost:9081/admins';
       console.log('url = ' + url);
-      this.axios.get(url).then((response) => {
+      this.axios
+          .create({'headers': {'Authorization': jwt}})
+          .get(url).then((response) => {
         let responseBody = response.data;
         console.log(responseBody);
         this.tableData = responseBody.data;

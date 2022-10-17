@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       ruleForm: {
-        username: 'admin',
+        username: 'root',
         password: '123456'
       },
       rules: {
@@ -41,24 +41,32 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let url = 'http://localhost:8080/login';
+          let url = 'http://localhost:9081/admins/login';
           console.log('url = ' + url);
-          console.log('请求参数：' + this.ruleForm);
-          console.log(this.ruleForm);
-          this.axios.post(url, this.ruleForm).then((response) => {
+          let formData = this.qs.stringify(this.ruleForm);
+          this.axios.post(url, formData).then((response) => {
+            console.log('服务器端的响应：');
             console.log(response);
-            if (response.data == 1) {
-              // console.log('登录成功！');
+            let responseBody = response.data;
+            if (responseBody.state == 20000) {
+              // 登录成功，服务器端将响应JWT
+              let jwt = responseBody.data;
+              console.log('登录成功，服务器端响应的JWT：' + jwt);
+              // 使用LocalStorage存储JWT
+              localStorage.setItem('jwt', jwt);
+              console.log('将JWT数据保存到LocalStorage！');
+              // 测试：从LocalStorage中取出JWT
+              // let localJwt = localStorage.getItem('jwt');
+              // console.log('测试：从LocalStorage中取出JWT：' + localJwt);
+              // 提示
               this.$message({
                 message: '登录成功！',
                 type: 'success'
               });
-            } else if (response.data == 2) {
-              // console.log('登录失败，用户名错误！');
-              this.$message.error('登录失败，用户名错误！');
+              // 跳转页面
+              this.$router.push('/');
             } else {
-              // console.log('登录失败，密码错误！');
-              this.$message.error('登录失败，密码错误！');
+              this.$message.error(responseBody.message);
             }
           });
         } else {
